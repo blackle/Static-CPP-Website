@@ -3,7 +3,7 @@
 #include "resources.h"
 #include <iostream>
 
-#define PORT 4873
+#define PORT 80
 
 int main() {
 	//resource list is generated on construction of this class
