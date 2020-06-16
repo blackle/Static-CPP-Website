@@ -31,7 +31,7 @@ def main():
 		f.write('{{"{path}", {{"{mimetype}", "{etag}", (size_t) (&{end} - &{start}), &{start} }} }},\n'.format( \
 			path=path, \
 			mimetype=mimetype, \
-			etag=str(uuid.uuid1()), \
+			etag=str(uuid.uuid4()), \
 			start=start_symbol_for_file(file), \
 			end=end_symbol_for_file(file) \
 		))
