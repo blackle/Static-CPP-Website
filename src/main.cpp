@@ -51,12 +51,14 @@ int main() {
 			res->writeHeader("ETag", resource.etag);
 
 			auto data = resource.data;
-			auto streamer = [data, res](int offset) {
+			std::string pathcopy = std::string(path);
+			auto streamer = [data, pathcopy, res](int offset) {
 				while (true) {
 					if (static_cast<unsigned>(offset) >= data.length()) {
 						return true; //we hit the end of the file, which means we wrote everything
 					}
 					auto chunk = data.substr(offset, CHUNK_SIZE);
+					std::cerr << "writing " << chunk.length() << " bytes for " << pathcopy << std::endl;
 					if (!res->tryEnd(chunk, data.length()).first) {
 						return false; //failed, meaning we need to keep writing
 					}
