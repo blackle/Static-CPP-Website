@@ -2,6 +2,8 @@
 #include "resources.h"
 #include <iostream>
 
+#define PORT 4873
+
 int main() {
 	Resources resources;
 
@@ -26,11 +28,11 @@ int main() {
 				res->writeStatus("404 Not Found");
 		    res->end("404 Not Found");
 			}
-	}).listen(3000, [](auto *token) {
+	}).listen(PORT, [](auto *token) {
 	    if (token) {
-		std::cout << "Listening on port " << 3000 << std::endl;
+		std::cout << "Listening on port " << PORT << std::endl;
 	    }
 	}).run();
 
-	std::cout << "Failed to listen on port 3000" << std::endl;
+	std::cout << "Failed to listen on port " << PORT << std::endl;
 }
