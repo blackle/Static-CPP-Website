@@ -28,9 +28,9 @@ def main():
 		path = file[len("public/"):]
 		mimetype, encoding = mimetypes.guess_type(path)
 		symbol = start_symbol_for_file(file)
-		f.write('{{"{path}", {{"{mimetype}", "{etag}", (size_t) (&{end} - &{start}), &{start} }} }},\n'.format( \
+		f.write('{{"{path}", {{"{mimetype}", "{etag}", std::string_view(&{start}, (size_t) (&{end} - &{start})) }} }},\n'.format( \
 			path=path, \
-			mimetype=mimetype, \
+			mimetype=mimetype + "; charset=UTF-8", \
 			etag=str(uuid.uuid4()), \
 			start=start_symbol_for_file(file), \
 			end=end_symbol_for_file(file) \

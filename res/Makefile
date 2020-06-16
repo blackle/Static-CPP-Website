@@ -10,7 +10,7 @@ resources.a : $(OBJECTS) resources.o
 resources.o : resources.cpp resources.h
 	g++ -c $< -o $@ -std=c++17
 
-resources.cpp : $(FILES) generate_resources.py
+resources.cpp : $(FILES) $(OBJECTS) generate_resources.py
 	./generate_resources.py $(FILES)
 
 build/%.o : public/%

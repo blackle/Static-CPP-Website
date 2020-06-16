@@ -5,8 +5,7 @@
 struct Resource {
 	std::string_view mimetype;
 	std::string_view etag;
-	size_t length;
-	const char* data;
+	std::string_view data;
 };
 
 class Resources {

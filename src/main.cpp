@@ -4,6 +4,8 @@
 #include <iostream>
 #include <cstdlib>
 
+#define CHUNK_SIZE 100000
+
 int main() {
 	const char* portstring = std::getenv("PORT");
 	if (portstring == nullptr) {
@@ -38,11 +40,32 @@ int main() {
 				return;
 			}
 
+			// auto range = req->getHeader("range");
+			// if (range.length() > 0 && range.substr(0,6) == "bytes=") {
+			// 	range = range.substr(0,6)
+			// 	std::cout << range << std::endl;
+			// }
+			// res->writeHeader("Accept-Ranges", "bytes");
+
 			res->writeHeader("Content-type", resource.mimetype);
 			res->writeHeader("ETag", resource.etag);
-			//todo: hhnnggg chunk it
-			res->end(std::string_view(resource.data, resource.length));
 
+			auto data = resource.data;
+			auto streamer = [data, res](int offset) {
+				while (true) {
+					if (static_cast<unsigned>(offset) >= data.length()) {
+						return true; //we hit the end of the file, which means we wrote everything
+					}
+					auto chunk = data.substr(offset, CHUNK_SIZE);
+					if (!res->tryEnd(chunk, data.length()).first) {
+						return false; //failed, meaning we need to keep writing
+					}
+					offset += CHUNK_SIZE;
+				}
+			};
+			if (!streamer(0)) {
+				res->onWritable(streamer);
+			}
 	}).listen(port, [port](auto *token) {
 	    if (token) {
 		std::cout << "Listening on port " << port << std::endl;
