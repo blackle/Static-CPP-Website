@@ -1,20 +1,30 @@
 #include "App.h"
 #include "resources.h"
 #include <iostream>
-/* Note that uWS::SSLApp({options}) is the same as uWS::App() when compiled without SSL support */
 
 int main() {
-	Resources res;
-	auto i = res.map.find("index.html");
-	if (i != res.map.end()) {
-		auto resource = i->second;
-		std::cout << "mimetype: " << resource.mimetype << std::endl;
-	}
-	/* Overly simple hello world app */
-	uWS::App().get("/*", [](auto *res, auto *req) {
+	Resources resources;
+
+	uWS::App().get("/*", [&resources](auto *res, auto *req) {
 			(void) res;
 			(void) req;
-	    res->end("Hello world!");
+			auto path = req->getUrl();
+			std::string modified;
+			if (path.back() == '/') {
+				modified = std::string(path) + "index.html";
+				path = modified;
+			}
+			path = path.substr(1, path.length());
+			auto i = resources.map.find(path);
+			if (i != resources.map.end()) {
+				auto resource = i->second;
+				res->writeHeader("Content-type", resource.mimetype);
+				//todo: hhnnggg chunk it
+				res->end(std::string_view(resource.data, resource.length));
+			} else {
+				res->writeStatus("404 Not Found");
+		    res->end("404 Not Found");
+			}
 	}).listen(3000, [](auto *token) {
 	    if (token) {
 		std::cout << "Listening on port " << 3000 << std::endl;

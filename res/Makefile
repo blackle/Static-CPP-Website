@@ -8,7 +8,7 @@ resources.a : $(OBJECTS) resources.o
 	ar cr $@ $^
 
 resources.o : resources.cpp resources.h
-	g++ -c $< -o $@
+	g++ -c $< -o $@ -std=c++17
 
 resources.cpp : $(FILES) generate_resources.py
 	./generate_resources.py $(FILES)
