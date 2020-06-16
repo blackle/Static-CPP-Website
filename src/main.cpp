@@ -1,6 +1,7 @@
 #define UWS_HTTPRESPONSE_NO_WRITEMARK
 #include "App.h"
 #include "resources.h"
+#include "StringViewStreamer.h"
 #include <iostream>
 #include <cstdlib>
 
@@ -40,6 +41,7 @@ int main() {
 				return;
 			}
 
+			res->writeHeader("ETag", resource.etag);
 			// auto range = req->getHeader("range");
 			// if (range.length() > 0 && range.substr(0,6) == "bytes=") {
 			// 	range = range.substr(0,6)
@@ -48,21 +50,9 @@ int main() {
 			// res->writeHeader("Accept-Ranges", "bytes");
 
 			res->writeHeader("Content-type", resource.mimetype);
-			res->writeHeader("ETag", resource.etag);
 
 			auto data = resource.data;
-			auto streamer = [data, res](int offset) {
-				while (true) {
-					if (static_cast<unsigned>(offset) >= data.length()) {
-						return true; //we hit the end of the file, which means we wrote everything
-					}
-					auto chunk = data.substr(offset, CHUNK_SIZE);
-					if (!res->tryEnd(chunk, data.length()).first) {
-						return false; //failed, meaning we need to keep writing
-					}
-					offset += CHUNK_SIZE;
-				}
-			};
+			auto streamer = StringViewStreamer(data, data.length(), responseToFacade(res));
 			if (!streamer(0)) {
 				res->onWritable(streamer);
 				res->onAborted([]() {
