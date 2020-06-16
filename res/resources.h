@@ -1,11 +1,10 @@
 #pragma once
-#include <string>
 #include <string_view>
 #include <unordered_map>
 
 struct Resource {
-	std::string mimetype;
-	std::string etag;
+	std::string_view mimetype;
+	std::string_view etag;
 	size_t length;
 	const char* data;
 };
