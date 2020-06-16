@@ -26,9 +26,9 @@ int main() {
 			auto i = resources.map.find(path);
 			if (i == resources.map.end()) {
 				res->writeStatus("404 Not Found");
-		    res->end("404 Not Found");
-		    return;
-		  }
+				res->end("404 Not Found");
+				return;
+			}
 
 			auto resource = i->second;
 
