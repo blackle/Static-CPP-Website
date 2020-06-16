@@ -31,6 +31,14 @@ int main() {
 		  }
 
 			auto resource = i->second;
+
+			auto client_etag = req->getHeader("if-none-match");
+			if (client_etag == resource.etag) {
+				res->writeStatus("304 Not Modified");
+				res->end();
+				return;
+			}
+
 			res->writeHeader("Content-type", resource.mimetype);
 			res->writeHeader("ETag", resource.etag);
 			//todo: hhnnggg chunk it
