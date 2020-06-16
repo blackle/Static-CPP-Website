@@ -5,6 +5,7 @@
 
 struct Resource {
 	std::string mimetype;
+	std::string etag;
 	size_t length;
 	const char* data;
 };

@@ -19,6 +19,7 @@ int main() {
 			if (i != resources.map.end()) {
 				auto resource = i->second;
 				res->writeHeader("Content-type", resource.mimetype);
+				res->writeHeader("ETag", resource.etag);
 				//todo: hhnnggg chunk it
 				res->end(std::string_view(resource.data, resource.length));
 			} else {
