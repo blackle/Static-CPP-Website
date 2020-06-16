@@ -2,10 +2,10 @@
 #include "App.h"
 #include "resources.h"
 #include <iostream>
-
-#define PORT 80
+#include <cstdlib>
 
 int main() {
+	int port = atoi(std::getenv("PORT"));
 	//resource list is generated on construction of this class
 	Resources resources;
 
@@ -32,11 +32,11 @@ int main() {
 			//todo: hhnnggg chunk it
 			res->end(std::string_view(resource.data, resource.length));
 
-	}).listen(PORT, [](auto *token) {
+	}).listen(port, [port](auto *token) {
 	    if (token) {
-		std::cout << "Listening on port " << PORT << std::endl;
+		std::cout << "Listening on port " << port << std::endl;
 	    }
 	}).run();
 
-	std::cout << "Failed to listen on port " << PORT << std::endl;
+	std::cout << "Failed to listen on port " << port << std::endl;
 }
