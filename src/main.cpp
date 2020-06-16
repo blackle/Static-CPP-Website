@@ -5,7 +5,11 @@
 #include <cstdlib>
 
 int main() {
-	int port = atoi(std::getenv("PORT"));
+	const char* portstring = std::getenv("PORT");
+	if (portstring == nullptr) {
+		portstring = "8080";
+	}
+	int port = atoi(portstring);
 	//resource list is generated on construction of this class
 	Resources resources;
 
