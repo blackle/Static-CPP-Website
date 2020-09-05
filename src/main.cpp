@@ -4,6 +4,7 @@
 #include "StringViewStreamer.h"
 #include <iostream>
 #include <cstdlib>
+#include <atomic>
 
 #define CHUNK_SIZE 100000
 
@@ -14,9 +15,10 @@ int main() {
 	}
 	int port = atoi(portstring);
 	//resource list is generated on construction of this class
-	Resources resources;
+	const Resources resources;
+	std::atomic<int> pagecount = 0;
 
-	uWS::App().get("/*", [&resources](auto *res, auto *req) {
+	uWS::App().get("/*", [&resources, &pagecount](auto *res, auto *req) {
 			auto path = req->getUrl();
 
 			std::string modified; //path is a string_view, so to modify it we need a temporary string that remains in scope.
@@ -48,6 +50,8 @@ int main() {
 			// 	std::cout << range << std::endl;
 			// }
 			// res->writeHeader("Accept-Ranges", "bytes");
+			pagecount++;
+			res->writeHeader("x-page-counts", std::to_string(pagecount));
 
 			res->writeHeader("Content-type", resource.mimetype);
 
